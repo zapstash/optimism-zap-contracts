@@ -1,0 +1,9 @@
+# Packages
+node_modules/
+
+# Typechain build outputs
+build/
+
+# Hardhat build outputs
+artifacts/
+cache/
