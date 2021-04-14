@@ -2,6 +2,9 @@
 Zap Ethereum L1 solidity contracts.
 
 # Setup
+## Fill out ENV variables
+Generate a random ETH private key for Rinkeby (obviously not secure enough for mainnet accounts): https://asecuritysite.com/encryption/ethadd
+
 ## Install Yarn
 `npm install --global yarn`
 
@@ -17,5 +20,4 @@ TODO: Make these npm commands (nice to have)
 `npx hardhat run --network localhost scripts/deploy.js`
 
 ## Rinkeby (WIP)
-TODO: Not working yet.
 `npx hardhat run --network rinekby scripts/deploy.js`

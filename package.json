@@ -4,14 +4,16 @@
   "engines": {
     "node": ">=14.16.0"
   },
-  "main": "",
+  "main": "./lib/main.js",
+  "types": "./lib/main.d.ts",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf ./cache && rimraf ./artifacts",
     "compile": "yarn clean && hardhat compile",
     "test": "yarn clean && hardhat test",
     "lint": "yarn run lint:typescript",
-    "lint:typescript": "tslint --format stylish --project ."
+    "lint:typescript": "tslint --format stylish --project .",
+    "build:package": "tsc --build tsconfig.package.json"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",

@@ -2,11 +2,11 @@ import { expect } from "../setup"
 import { ethers } from "hardhat"
 import { BytesLike, ContractTransaction } from "ethers"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
-import { Zap__factory } from "../../build/types"
-import { Zap } from "../../build/types/Zap"
+import { Zap__factory } from "../../typechain"
+import { Zap } from "../../typechain"
 
-import * as zapUtil from "../../util/zapUtil"
-import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../util/zapUtil';
+import * as zapUtil from "../../src.ts/zapUtil"
+import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../src.ts/zapUtil';
 import {
   hexlify,
   hexZeroPad,

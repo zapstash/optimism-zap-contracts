@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
     }
   },
   typechain: {
-    outDir: "build/types",
+    outDir: "typechain",
     target: "ethers-v5",
   },
 }

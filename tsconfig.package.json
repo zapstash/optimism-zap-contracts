@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2017",
+        "declaration": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "outDir": "./lib",
+        "rootDir": "./src.ts"
+    },
+    "include": ["./src.ts/*"]
+}
