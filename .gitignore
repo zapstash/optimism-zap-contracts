@@ -7,3 +7,6 @@ build/
 # Hardhat build outputs
 artifacts/
 cache/
+
+# ENV
+.env

@@ -12,7 +12,7 @@ const deploy = async () => {
   );
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const zapContract = await new Zap__factory(deployer).deploy(version);
+  const zapContract = await new Zap__factory(deployer).deploy(VERSION);
   console.log("Zap contract deployed to:", zapContract.address);
 }
 
