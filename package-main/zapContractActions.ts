@@ -3,8 +3,8 @@ import { BytesLike, ContractTransaction, providers, getDefaultProvider } from "e
 // import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { Zap, Zap__factory } from "../typechain"
 
-import * as zapUtil from "./zapUtil"
-import * as addresses from "./addresses"
+import * as HashUtils from "./HashUtils"
+import * as Addresses from "./Addresses"
 
 import {
   hexlify,
@@ -40,7 +40,7 @@ export const requestWalletAccess = async (window) => {
         provider = getDefaultProvider(); // use ethers.js underlying fallbacks
     }
     const approvedSigner = provider.getSigner();
-    const zapContract = Zap__factory.connect(addresses[chain].zapContract, approvedSigner);
+    const zapContract = Zap__factory.connect(Addresses[chain].zapContract, approvedSigner);
 
     return {
         provider,

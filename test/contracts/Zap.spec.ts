@@ -5,8 +5,8 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { Zap__factory } from "../../typechain"
 import { Zap } from "../../typechain"
 
-import * as zapUtil from "../../package-main/zapUtil"
-import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../package-main/zapUtil';
+import * as HashUtils from "../../package-main/HashUtils"
+import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../package-main/HashUtils';
 import {
   hexlify,
   hexZeroPad,
@@ -40,7 +40,7 @@ const shouldBehaveLikeSuccessfulZapMint = (
     beforeEach(async () => {
       ZapContract = getZapContract()
       zapper = await getZapperAddress()
-      seriesId = zapUtil.eip712HashSeriesFingerprint(
+      seriesId = HashUtils.eip712HashSeriesFingerprint(
         name,
         version,
         chainId,
@@ -48,7 +48,7 @@ const shouldBehaveLikeSuccessfulZapMint = (
         exampleIpfsHash,
         zapper,
       )
-      zapId = zapUtil.eip712HashZapData(
+      zapId = HashUtils.eip712HashZapData(
         name,
         version,
         chainId,
@@ -114,7 +114,7 @@ const shouldBehaveLikeZapMintWithoutApproval = (
   beforeEach(async () => {
     ZapContract = getZapContract()
     zapper = await getZapperAddress()
-    zapId = zapUtil.eip712HashZapData(
+    zapId = HashUtils.eip712HashZapData(
       name,
       version,
       chainId,
@@ -449,7 +449,7 @@ describe("Zap", () => {
     describe("MINT_INTENT_STATEMENT_HASH", () => {
       it("should match the MINT_INTENT_STATEMENT_HASH in the contract", async () => {
         const mintIntentStatementHash: String = await ZapContract.MINT_INTENT_STATEMENT_HASH()
-        expect(zapUtil.MINT_INTENT_STATEMENT_HASH).to.equal(
+        expect(HashUtils.MINT_INTENT_STATEMENT_HASH).to.equal(
           mintIntentStatementHash,
         )
       })
@@ -458,28 +458,28 @@ describe("Zap", () => {
     describe("ZAP_MINT_INTENT_TYPE_HASH", () => {
       it("should match the ZAP_MINT_INTENT_TYPE_HASH in the contract", async () => {
         const zapMintIntentTypeHash: String = await ZapContract.ZAP_MINT_INTENT_TYPE_HASH()
-        expect(zapUtil.ZAP_MINT_INTENT_TYPE_HASH).to.equal(zapMintIntentTypeHash)
+        expect(HashUtils.ZAP_MINT_INTENT_TYPE_HASH).to.equal(zapMintIntentTypeHash)
       })
     })
 
     describe("ZAP_DATA_TYPE_HASH", () => {
       it("should match the ZAP_DATA_TYPE_HASH in the contract", async () => {
         const zapDataTypeHash: String = await ZapContract.ZAP_DATA_TYPE_HASH()
-        expect(zapUtil.ZAP_DATA_TYPE_HASH).to.equal(zapDataTypeHash)
+        expect(HashUtils.ZAP_DATA_TYPE_HASH).to.equal(zapDataTypeHash)
       })
     })
 
     describe("SERIES_PUBLICATION_TYPE_HASH", () => {
       it("should match the SERIES_PUBLICATION_TYPE_HASH in the contract", async () => {
         const seriesPublicationTypeHash: String = await ZapContract.SERIES_PUBLICATION_TYPE_HASH()
-        expect(zapUtil.SERIES_PUBLICATION_TYPE_HASH).to.equal(seriesPublicationTypeHash)
+        expect(HashUtils.SERIES_PUBLICATION_TYPE_HASH).to.equal(seriesPublicationTypeHash)
       })
     })
 
     describe("SERIES_FINGERPRINT_TYPE_HASH", () => {
       it("should match the SERIES_FINGERPRINT_TYPE_HASH in the contract", async () => {
         const seriesFingerprintTypeHash: String = await ZapContract.SERIES_FINGERPRINT_TYPE_HASH()
-        expect(zapUtil.SERIES_FINGERPRINT_TYPE_HASH).to.equal(seriesFingerprintTypeHash)
+        expect(HashUtils.SERIES_FINGERPRINT_TYPE_HASH).to.equal(seriesFingerprintTypeHash)
       })
     })
 
@@ -491,7 +491,7 @@ describe("Zap", () => {
       let eip712HashZapMintIntentString: BytesLike
 
       beforeEach(() => {
-        eip712HashZapMintIntentString = hexlify(zapUtil.eip712HashZapMintIntent(
+        eip712HashZapMintIntentString = hexlify(HashUtils.eip712HashZapMintIntent(
           name,
           version,
           chainId,
@@ -571,7 +571,7 @@ describe("Zap", () => {
       let eip712HashZapDataString: BytesLike
 
       beforeEach(() => {
-        eip712HashZapDataString = hexlify(zapUtil.eip712HashZapData(
+        eip712HashZapDataString = hexlify(HashUtils.eip712HashZapData(
           name,
           version,
           chainId,
@@ -650,7 +650,7 @@ describe("Zap", () => {
       let eip712HashSeriesPublicationString: BytesLike
 
       beforeEach(() => {
-        eip712HashSeriesPublicationString = hexlify(zapUtil.eip712HashSeriesPublication(
+        eip712HashSeriesPublicationString = hexlify(HashUtils.eip712HashSeriesPublication(
           name,
           version,
           chainId,
@@ -719,7 +719,7 @@ describe("Zap", () => {
       let eip712HashSeriesFingerprintString: BytesLike
 
       beforeEach(() => {
-        eip712HashSeriesFingerprintString = hexlify(zapUtil.eip712HashSeriesFingerprint(
+        eip712HashSeriesFingerprintString = hexlify(HashUtils.eip712HashSeriesFingerprint(
           name,
           version,
           chainId,

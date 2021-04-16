@@ -1,7 +1,7 @@
 "use strict";
 
-import * as addresses from "./addresses"
-import * as zapContractActions from "./zapContractActions"
-import * as zapUtil from "./zapUtil"
+import * as Addresses from "./Addresses"
+import * as ZapContractActions from "./ZapContractActions"
+import * as HashUtils from "./HashUtils"
 
-export { addresses, zapContractActions, zapUtil }
+export { Addresses, ZapContractActions, HashUtils }
