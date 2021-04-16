@@ -4,7 +4,7 @@ import { BytesLike, ContractTransaction, providers, getDefaultProvider } from "e
 import { Zap, Zap__factory } from "../typechain"
 
 import * as HashUtils from "./HashUtils"
-import * as Addresses from "./Addresses"
+import Addresses from "./Addresses"
 
 import {
   hexlify,
@@ -35,12 +35,13 @@ export const mintByOwnerForOwner = (zapContract): Promise<ContractTransaction> =
 export const requestWalletAccess = async (window) => {
     let provider;
     if (typeof (window.ethereum) !== 'undefined') {
+        await window.ethereum.request({ method: 'eth_requestAccounts' })
         provider = new providers.Web3Provider(window.ethereum)
     } else {
         provider = getDefaultProvider(); // use ethers.js underlying fallbacks
     }
     const approvedSigner = provider.getSigner();
-    const zapContract = Zap__factory.connect(Addresses[chain].zapContract, approvedSigner);
+    const zapContract = Zap__factory.connect(Addresses[chain].ZapContract, approvedSigner);
 
     return {
         provider,
