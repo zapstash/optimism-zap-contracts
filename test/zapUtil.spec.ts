@@ -1,7 +1,7 @@
 import { expect } from "./setup"
 import * as ethers from "ethers"
 import { keccak256 } from "ethers/lib/utils"
-import * as zapUtil from "../src.ts/zapUtil"
+import * as zapUtil from "../package-main/zapUtil"
 
 // describe('zapUtil', () => {
 //     describe('hashZapMintIntent', () => {

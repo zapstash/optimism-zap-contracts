@@ -1,8 +1,6 @@
 // import { expect } from "../setup"
-import { ethers } from "hardhat"
-// import { BytesLike, ContractTransaction } from "ethers"
+import { BytesLike, ContractTransaction, providers, getDefaultProvider } from "ethers"
 // import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
-// import { Zap__factory } from "../../typechain"
 import { Zap, Zap__factory } from "../typechain"
 
 import * as zapUtil from "./zapUtil"
@@ -12,7 +10,6 @@ import {
   hexlify,
   hexZeroPad,
 } from "ethers/lib/utils"
-import { ContractTransaction } from "@ethersproject/contracts"
 
 // const name: string = "Zap"
 // const symbol: string = "ZAP"
@@ -29,22 +26,25 @@ const exampleSeriesTotal = hexZeroPad(hexlify(420), 4)
 const examplePublication = { ipfsHash: exampleIpfsHash, zapper: exampleZapper, seriesTotal: exampleSeriesTotal }
 const exampleSeriesFingerprint = { ipfsHash: exampleIpfsHash, zapper: exampleZapper }
 
+const chain = "rinkeby"; // TODO: Make this configurable based off web3
 
-let provider;
-let approvedSigner;
-let ZapContract: Zap
-const chain = "rinkeby"; // TODO: Configurable based off web3
-
-export const mintByOwnerForOwner = (): Promise<ContractTransaction> => {
-    return ZapContract.mintByOwnerForOwner(exampleIpfsHash, exampleSeriesTotal, hexZeroPad(hexlify(0), 4));
+export const mintByOwnerForOwner = (zapContract): Promise<ContractTransaction> => {
+    return zapContract.mintByOwnerForOwner(exampleIpfsHash, exampleSeriesTotal, hexZeroPad(hexlify(0), 4));
 }
 
-export const requestWalletAccess = async () => {
+export const requestWalletAccess = async (window) => {
+    let provider;
     if (typeof (window.ethereum) !== 'undefined') {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
+        provider = new providers.Web3Provider(window.ethereum)
     } else {
-        provider = ethers.getDefaultProvider(); // use ethers.js underlying fallbacks
+        provider = getDefaultProvider(); // use ethers.js underlying fallbacks
     }
-    approvedSigner = provider.getSigner();
-    ZapContract = Zap__factory.connect(addresses[chain].zapContract, approvedSigner);
+    const approvedSigner = provider.getSigner();
+    const zapContract = Zap__factory.connect(addresses[chain].zapContract, approvedSigner);
+
+    return {
+        provider,
+        approvedSigner,
+        zapContract
+    }
 }

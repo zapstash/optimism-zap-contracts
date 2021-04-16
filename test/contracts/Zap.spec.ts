@@ -5,8 +5,8 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { Zap__factory } from "../../typechain"
 import { Zap } from "../../typechain"
 
-import * as zapUtil from "../../src.ts/zapUtil"
-import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../src.ts/zapUtil';
+import * as zapUtil from "../../package-main/zapUtil"
+import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../package-main/zapUtil';
 import {
   hexlify,
   hexZeroPad,

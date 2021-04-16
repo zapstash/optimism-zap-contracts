@@ -8,8 +8,8 @@
         "typeRoots": [
             "node_modules/@types"
         ],
-        "outDir": "./lib",
-        "rootDir": "./src.ts"
+        "outDir": "./lib/",
+        "rootDir": "."
     },
-    "include": ["./src.ts/*"]
+    "include": ["./package-main/*", "./typechain/*"]
 }
