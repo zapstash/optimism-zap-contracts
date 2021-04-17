@@ -18,7 +18,7 @@ const chain = "rinkeby"; // TODO: Make this configurable based off web3
 
 const bytes4ify = (givenNumber) => hexZeroPad(hexlify(givenNumber), 4)
 
-export const mintByOwnerForOwner = (ipfsHash, seriesTotal, serialNumber,zapContract): Promise<ContractTransaction> => {
+export const mintByOwnerForOwner = (zapContract, ipfsHash, seriesTotal, serialNumber): Promise<ContractTransaction> => {
     return zapContract.mintByOwnerForOwner(ipfsHash, bytes4ify(seriesTotal), bytes4ify(serialNumber));
 }
 
