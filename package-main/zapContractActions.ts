@@ -11,25 +11,15 @@ import {
   hexZeroPad,
 } from "ethers/lib/utils"
 
-// const name: string = "Zap"
-// const symbol: string = "ZAP"
-// const version: string = "0.1.0"
-// const chainId: number = 31337
-
 
 // Reusable example data.
-const exampleIpfsHash =
-  "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-const exampleZapper = "0x0123456789abcdef0123456789abcdef01234567"
-const exampleSerialNumber = hexZeroPad(hexlify(42), 4)
-const exampleSeriesTotal = hexZeroPad(hexlify(420), 4)
-const examplePublication = { ipfsHash: exampleIpfsHash, zapper: exampleZapper, seriesTotal: exampleSeriesTotal }
-const exampleSeriesFingerprint = { ipfsHash: exampleIpfsHash, zapper: exampleZapper }
 
 const chain = "rinkeby"; // TODO: Make this configurable based off web3
 
-export const mintByOwnerForOwner = (zapContract): Promise<ContractTransaction> => {
-    return zapContract.mintByOwnerForOwner(exampleIpfsHash, exampleSeriesTotal, hexZeroPad(hexlify(0), 4));
+const bytes4ify = (givenNumber) => hexZeroPad(hexlify(givenNumber), 4)
+
+export const mintByOwnerForOwner = (ipfsHash, seriesTotal, serialNumber,zapContract): Promise<ContractTransaction> => {
+    return zapContract.mintByOwnerForOwner(ipfsHash, bytes4ify(seriesTotal), bytes4ify(serialNumber));
 }
 
 export const requestWalletAccess = async (window) => {
@@ -49,3 +39,4 @@ export const requestWalletAccess = async (window) => {
         zapContract
     }
 }
+
