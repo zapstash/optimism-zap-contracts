@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "hardhat": {
+      "signature": "032707232f588000d5eac7d7f7045cc2",
+      "file": true
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "l1-zap-contracts",
-  "version": "2.1.0",
+  "name": "optimism-zap-contracts",
+  "version": "1.0.0",
   "engines": {
     "node": ">=14.16.0"
   },
@@ -9,8 +9,8 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf ./cache && rimraf ./artifacts",
-    "compile": "yarn clean && hardhat compile",
-    "test": "yarn clean && hardhat test",
+    "compile": "yarn clean && hardhat compile --network localOptimism",
+    "test": "yarn clean && hardhat test --network localOptimism",
     "lint": "yarn run lint:typescript",
     "lint:typescript": "tslint --format stylish --project .",
     "build:package": "tsc --build tsconfig.package.json"
@@ -25,7 +25,6 @@
     "@types/node": "^14.14.37",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.3.0",
-    "hardhat": "^2.0.8",
     "mocha": "^8.2.1",
     "rimraf": "^3.0.2",
     "ts-generator": "^0.1.1",
@@ -35,10 +34,13 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.0.0",
+    "@eth-optimism/hardhat-ovm": "^0.0.2",
+    "@eth-optimism/plugins": "0.0.20",
     "dotenv": "^8.2.0",
     "eth-sig-util": "^3.0.1",
     "ethers": "^5.0.24",
-    "solc": "^0.8.3"
+    "hardhat": "file:.yalc/hardhat",
+    "openzeppelin-contracts": "bstchow/optimism-openzeppelin-contracts",
+    "solc": "^0.7.6"
   }
 }
