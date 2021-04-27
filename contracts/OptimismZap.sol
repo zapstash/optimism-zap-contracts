@@ -132,7 +132,7 @@ contract OptimismZap is ERC721, EIP712, Ownable {
     ) external {
         SeriesPublication memory publication = SeriesPublication(ipfsHash, msg.sender, seriesTotal);
         bytes32 digest = eip712HashZapMintIntent(publication, serialNumber);
-        require(digest.recover(contractOwnerSignatureData) == owner(), "Zap: Signature address must match contract owner.");
+        require(digest.recover(contractOwnerSignatureData) == owner(), "OptimismZap: Signature address must match contract owner.");
         _mint(publication, serialNumber);
     }
 

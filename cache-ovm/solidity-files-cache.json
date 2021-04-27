@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/bchow/zapstash/optimism-zap-contracts/contracts/OptimismZap.sol": {
-      "lastModificationDate": 1619374517414,
-      "contentHash": "33342b8a36a509f048ec2c0b72326324",
+      "lastModificationDate": 1619379040758,
+      "contentHash": "98c13e3a813d342003f095f7e9941597",
       "sourceName": "contracts/OptimismZap.sol",
       "solcConfig": {
         "version": "0.7.6",

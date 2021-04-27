@@ -154,13 +154,12 @@ const shouldBehaveLikeZapMintWithoutApproval = (
 describe("OptimismZap", () => {
   let zapper: SignerWithAddress
   let contractOwner: SignerWithAddress
-  let account2: SignerWithAddress
-  let account3: SignerWithAddress
+  let rando1: SignerWithAddress
 
   let ZapContract: OptimismZap
 
   before(async () => {
-    [zapper, contractOwner, account2, account3] = await ethers.getSigners()
+    [zapper, contractOwner, rando1, rando1] = await ethers.getSigners()
 
   })
 
@@ -192,8 +191,8 @@ describe("OptimismZap", () => {
       )
 
       it("reverts when called by an address other than the contract owner", async () => {
-        const zapper = account2.address;
-        await expect(ZapContract.connect(zapper).mintByOwnerForOwner(
+        const randoCaller = rando1.address;
+        await expect(ZapContract.connect(randoCaller).mintByOwnerForOwner(
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
@@ -204,7 +203,7 @@ describe("OptimismZap", () => {
     })
 
     describe("mintByOwner", () => {
-      const getContractOwnerAddress = () => contractOwner.address
+      const getZapperAddress = () => zapper.address
       const successfulMintByOwner = async (ipfsHash, seriesTotal, serialNumber, useGasLimitOverride) => {
         const typedData: ZapMintIntentTypedData = getZapMintIntentTypedDataToSign(
           {
@@ -214,40 +213,40 @@ describe("OptimismZap", () => {
             verifyingContract: ZapContract.address,
           },
           ipfsHash,
-          getContractOwnerAddress(),
+          getZapperAddress(),
           seriesTotal,
           serialNumber,
         )
-        const typedDataSignature = await contractOwner._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
-        return ZapContract.mintByOwner(
+        const zapperSignature = await zapper._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
+        return ZapContract.connect(contractOwner).mintByOwner(
           ipfsHash,
           seriesTotal,
           serialNumber,
-          getContractOwnerAddress(),
-          typedDataSignature,
+          getZapperAddress(),
+          zapperSignature,
           useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {}
         );
       }
       shouldBehaveLikeSuccessfulZapMint(
         () => ZapContract,
         successfulMintByOwner,
-        getContractOwnerAddress,
+        getZapperAddress,
       )
 
       shouldBehaveLikeZapMintWithoutApproval(
         () => ZapContract,
         successfulMintByOwner,
-        getContractOwnerAddress
+        getZapperAddress
       )
 
       it("reverts when called by an address other than the contract owner", async () => {
-        const typedData: ZapMintIntentTypedData = getZapMintIntentTypedDataToSign({ name, version, chainId, verifyingContract: ZapContract.address }, EXAMPLE_IPFS_HASH, getContractOwnerAddress(), EXAMPLE_SERIES_TOTAL, EXAMPLE_SERIAL_NUMBER)
-        const zapperSignature = await account2._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent);
-        await expect(ZapContract.connect(account2).mintByOwner(
+        const typedData: ZapMintIntentTypedData = getZapMintIntentTypedDataToSign({ name, version, chainId, verifyingContract: ZapContract.address }, EXAMPLE_IPFS_HASH, getZapperAddress(), EXAMPLE_SERIES_TOTAL, EXAMPLE_SERIAL_NUMBER)
+        const zapperSignature = await zapper._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent);
+        await expect(ZapContract.connect(rando1).mintByOwner(
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
-          getContractOwnerAddress(),
+          getZapperAddress(),
           zapperSignature
         )).to.be.reverted
         // TODO: Need Optimism support of revert messages
@@ -255,7 +254,7 @@ describe("OptimismZap", () => {
       })
 
       it("reverts when the zapperSignatureData does not match the claimedZapper", async () => {
-        const claimedZapperAddress = getContractOwnerAddress();
+        const claimedZapperAddress = contractOwner.address;
         const typedData: ZapMintIntentTypedData = getZapMintIntentTypedDataToSign(
           { name, version, chainId, verifyingContract: ZapContract.address },
           EXAMPLE_IPFS_HASH,
@@ -263,7 +262,7 @@ describe("OptimismZap", () => {
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER
         )
-        const fraudulentZapperSignature = await account3._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
+        const fraudulentZapperSignature = await rando1._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
         await expect(ZapContract.connect(contractOwner).mintByOwner(
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
@@ -275,11 +274,11 @@ describe("OptimismZap", () => {
         // )).to.revertedWith("OptimismZap: Signature address must match claimedZapper.");
       })
 
-      it("reverts when the zapperSignatureData does not match the input params", async () => {
+      it("reverts when the zapperSignatureData does not match the inputted Zap data", async () => {
         const typedDataWithDifferentZapper = getZapMintIntentTypedDataToSign(
           { name, version, chainId, verifyingContract: ZapContract.address },
           EXAMPLE_IPFS_HASH,
-          account2.address,
+          rando1.address,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER
         )
@@ -292,7 +291,7 @@ describe("OptimismZap", () => {
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
-          account2.address,
+          rando1.address,
           mismatchedDataContractOwnerSignature
         )).to.be.reverted
         // TODO: Need Optimism support of revert messages
@@ -301,25 +300,26 @@ describe("OptimismZap", () => {
     })
 
     describe("mintByZapper", () => {
-      const getZapperAddress = () => account2.address;
+      const getZapperAddress = () => zapper.address;
       const successfulMintByZapper = async (ipfsHash, seriesTotal, serialNumber, useGasLimitOverride) => {
-        return ZapContract.connect(getZapperAddress()).mintByZapper(
+        const typedData: ZapMintIntentTypedData = getZapMintIntentTypedDataToSign(
+          {
+            name,
+            version,
+            chainId,
+            verifyingContract: ZapContract.address,
+          },
+          ipfsHash,
+          getZapperAddress(),
+          seriesTotal,
+          serialNumber,
+        )
+        const contractOwnerSignature = await contractOwner._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
+        return ZapContract.connect(zapper).mintByZapper(
           ipfsHash,
           seriesTotal,
           serialNumber,
-          await account2._signTypedData(
-            { name, version, chainId, verifyingContract: ZapContract.address },
-            {
-              ZapMintIntent,
-            },
-            {
-              mintIntent: MINT_INTENT_STATEMENT,
-              ipfsHash,
-              zapper: getZapperAddress(),
-              seriesTotal,
-              serialNumber,
-            },
-          ),
+          contractOwnerSignature,
           useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {}
         );
       }
@@ -336,8 +336,8 @@ describe("OptimismZap", () => {
       )
 
       it("reverts when the contractOwnerSignatureData does not match the contract owner", async () => {
-        const getZapperAddress = () => account2.address;
-        const fraudulentContractOwnerSignature = await account3._signTypedData(
+        const getZapperAddress = () => rando1.address;
+        const fraudulentContractOwnerSignature = await rando1._signTypedData(
           { name, version, chainId, verifyingContract: ZapContract.address },
           {
             ZapMintIntent,
@@ -350,7 +350,7 @@ describe("OptimismZap", () => {
             serialNumber: EXAMPLE_SERIAL_NUMBER,
           },
         );
-        await expect(ZapContract.connect(account2).mintByZapper(
+        await expect(ZapContract.connect(rando1).mintByZapper(
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
@@ -360,8 +360,8 @@ describe("OptimismZap", () => {
         // )).to.revertedWith("Zap: Signature address must match contract owner.");
       })
 
-      it("reverts when the contractOwnerSignatureData does not match the input params", async () => {
-        const wrongZapper = account3.address;
+      it("reverts when the contractOwnerSignatureData does not match the inputted Zap data", async () => {
+        const wrongZapper = rando1.address;
         const contractOwnerSignatureOfOtherData = await contractOwner._signTypedData(
           { name, version, chainId, verifyingContract: ZapContract.address },
           {
@@ -375,7 +375,7 @@ describe("OptimismZap", () => {
             serialNumber: EXAMPLE_SERIAL_NUMBER,
           },
         );
-        await expect(ZapContract.connect(account2).mintByZapper(
+        await expect(ZapContract.connect(zapper).mintByZapper(
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
@@ -387,14 +387,14 @@ describe("OptimismZap", () => {
     })
 
     describe("mintBySignatures", () => {
-      const getZapperAddress = () => account2.address;
+      const getZapperAddress = () => zapper.address;
       const successfulMintBySignatures = async (ipfsHash, seriesTotal, serialNumber, useGasLimitOverride) => {
-        return await ZapContract.connect(zapper).mintBySignatures(
+        return await ZapContract.connect(rando1).mintBySignatures(
           ipfsHash,
           seriesTotal,
           serialNumber,
           getZapperAddress(),
-          await account2._signTypedData(
+          await zapper._signTypedData(
             { name, version, chainId, verifyingContract: ZapContract.address },
             {
               ZapMintIntent,
@@ -435,7 +435,7 @@ describe("OptimismZap", () => {
         getZapperAddress
       )
 
-      it("raises an error when the signature was not created by the contract owner", async () => {
+      it("raises an error when the contract owner signature was not created by the contract owner", async () => {
         const zapperAddress = zapper.address
         const typedData: ZapMintIntentTypedData = getZapMintIntentTypedDataToSign({ name, version, chainId, verifyingContract: ZapContract.address }, EXAMPLE_IPFS_HASH, zapperAddress, EXAMPLE_SERIES_TOTAL, EXAMPLE_SERIAL_NUMBER)
 
@@ -445,15 +445,15 @@ describe("OptimismZap", () => {
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
-          zapperAddress,
-          await account2._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent),
-          await contractOwner._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
+          getZapperAddress(),
+          await zapper._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent),
+          await rando1._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
         )).to.be.reverted;
         // TODO: Need Optimism support of revert messages
         // .to.revertedWith("OptimismZap: Mint of a serialNumber greater than or equal to the seriesTotal.")
       })
 
-      it("raises an error when the signature was not created by the zapper", () => { })
+      it("raises an error when the zapper signature was not created by the zapper", () => { })
 
       it("raises an error when the contract owner signature data does not match the given data", () => { })
 
