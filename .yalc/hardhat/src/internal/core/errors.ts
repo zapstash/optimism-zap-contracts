@@ -53,7 +53,7 @@ export class HardhatError extends CustomError {
 
   public static isHardhatErrorType(
     other: any,
-    descriptor: ErrorDescriptor
+    descriptor: ErrorDescriptor,
   ): other is HardhatError {
     return (
       HardhatError.isHardhatError(other) &&
@@ -70,13 +70,13 @@ export class HardhatError extends CustomError {
   constructor(
     errorDescriptor: ErrorDescriptor,
     messageArguments: Record<string, any> = {},
-    parentError?: Error
+    parentError?: Error,
   ) {
     const prefix = `${getErrorCode(errorDescriptor)}: `;
 
     const formattedMessage = applyErrorMessageTemplate(
       errorDescriptor.message,
-      messageArguments
+      messageArguments,
     );
 
     super(prefix + formattedMessage, parentError);
@@ -129,7 +129,7 @@ export class HardhatPluginError extends CustomError {
   public constructor(
     pluginNameOrMessage: string,
     messageOrParent?: string | Error,
-    parent?: Error
+    parent?: Error,
   ) {
     if (typeof messageOrParent === "string") {
       super(messageOrParent, parent);
@@ -146,7 +146,7 @@ export class HardhatPluginError extends CustomError {
 
 export class NomicLabsHardhatPluginError extends HardhatPluginError {
   public static isNomicLabsHardhatPluginError(
-    other: any
+    other: any,
   ): other is NomicLabsHardhatPluginError {
     return (
       other !== undefined &&
@@ -165,7 +165,7 @@ export class NomicLabsHardhatPluginError extends HardhatPluginError {
     pluginName: string,
     message: string,
     parent?: Error,
-    public shouldBeReported = false
+    public shouldBeReported = false,
   ) {
     super(pluginName, message, parent);
 
@@ -191,7 +191,7 @@ export class NomicLabsHardhatPluginError extends HardhatPluginError {
  */
 export function applyErrorMessageTemplate(
   template: string,
-  values: { [templateVar: string]: any }
+  values: { [templateVar: string]: any },
 ): string {
   return _applyErrorMessageTemplate(template, values, false);
 }
@@ -199,7 +199,7 @@ export function applyErrorMessageTemplate(
 function _applyErrorMessageTemplate(
   template: string,
   values: { [templateVar: string]: any },
-  isRecursiveCall: boolean
+  isRecursiveCall: boolean,
 ): string {
   if (!isRecursiveCall) {
     for (const variableName of Object.keys(values)) {
@@ -246,7 +246,7 @@ function _applyErrorMessageTemplate(
     if (value.match(/%([a-zA-Z][a-zA-Z0-9]*)?%/) !== null) {
       throw new HardhatError(
         ERRORS.INTERNAL.TEMPLATE_VALUE_CONTAINS_VARIABLE_TAG,
-        { variable: variableName }
+        { variable: variableName },
       );
     }
 
@@ -258,7 +258,7 @@ function _applyErrorMessageTemplate(
 
 export function assertHardhatInvariant(
   invariant: boolean,
-  message: string
+  message: string,
 ): asserts invariant {
   if (!invariant) {
     throw new HardhatError(ERRORS.GENERAL.ASSERTION_ERROR, { message });

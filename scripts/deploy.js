@@ -1,4 +1,4 @@
-const { Zap__factory } = require("../build/types");
+const { OptimismZap__factory } = require("../typechain");
 
 const VERSION = process.env.npm_package_version;
 
@@ -12,8 +12,9 @@ const deploy = async () => {
   );
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const zapContract = await new Zap__factory(deployer).deploy(VERSION);
-  console.log("Zap contract deployed to:", zapContract.address);
+  const MAX_GAS_LIMIT_OVERRIDE = { gasLimit: 8999999, gasPrice: 0 }
+  const zapContract = await new OptimismZap__factory(deployer).deploy(VERSION, MAX_GAS_LIMIT_OVERRIDE);
+  console.log("Optimism Zap contract deployed to:", zapContract.address);
 }
 
 deploy()

@@ -41,13 +41,13 @@ function getMessage(e: ValidationError): string {
     : getErrorMessage(
         getContextPath(e.context),
         e.value,
-        lastContext.type.name
+        lastContext.type.name,
       );
 }
 
 function getErrorMessage(path: string, value: any, expectedType: string) {
   return `Invalid value ${stringify(
-    value
+    value,
   )} for ${path} - Expected a value of type ${expectedType}.`;
 }
 
@@ -77,7 +77,7 @@ export const hexString = new t.Type<string>(
   "hex string",
   isHexString,
   (u, c) => (isHexString(u) ? t.success(u) : t.failure(u, c)),
-  t.identity
+  t.identity,
 );
 
 // TODO: These types have outdated name. They should match the UserConfig types.
@@ -118,11 +118,11 @@ const HardhatNetworkConfig = t.type({
   ...commonNetworkConfigFields,
   hardfork: optional(
     t.keyof(
-      fromEntries(HARDHAT_NETWORK_SUPPORTED_HARDFORKS.map((hf) => [hf, null]))
-    )
+      fromEntries(HARDHAT_NETWORK_SUPPORTED_HARDFORKS.map((hf) => [hf, null])),
+    ),
   ),
   accounts: optional(
-    t.union([t.array(HardhatNetworkAccount), HardhatNetworkHDAccountsConfig])
+    t.union([t.array(HardhatNetworkAccount), HardhatNetworkHDAccountsConfig]),
   ),
   blockGasLimit: optional(t.number),
   throwOnTransactionFailures: optional(t.boolean),
@@ -185,7 +185,7 @@ const HardhatConfig = t.type(
     paths: optional(ProjectPaths),
     solidity: optional(SolidityConfig),
   },
-  "HardhatConfig"
+  "HardhatConfig",
 );
 
 /**
@@ -214,7 +214,7 @@ export function getValidationErrors(config: any): string[] {
     if (hardhatNetwork !== undefined && typeof hardhatNetwork === "object") {
       if ("url" in hardhatNetwork) {
         errors.push(
-          `HardhatConfig.networks.${HARDHAT_NETWORK_NAME} can't have an url`
+          `HardhatConfig.networks.${HARDHAT_NETWORK_NAME} can't have an url`,
         );
       }
 
@@ -228,8 +228,8 @@ export function getValidationErrors(config: any): string[] {
           getErrorMessage(
             `HardhatConfig.networks.${HARDHAT_NETWORK_NAME}`,
             hardhatNetwork,
-            "HardhatNetworkConfig"
-          )
+            "HardhatNetworkConfig",
+          ),
         );
       }
 
@@ -240,8 +240,8 @@ export function getValidationErrors(config: any): string[] {
               getErrorMessage(
                 `HardhatConfig.networks.${HARDHAT_NETWORK_NAME}.accounts[].privateKey`,
                 account.privateKey,
-                "string"
-              )
+                "string",
+              ),
             );
           }
 
@@ -250,22 +250,22 @@ export function getValidationErrors(config: any): string[] {
               getErrorMessage(
                 `HardhatConfig.networks.${HARDHAT_NETWORK_NAME}.accounts[].balance`,
                 account.balance,
-                "string"
-              )
+                "string",
+              ),
             );
           }
         }
       } else if (typeof hardhatNetwork.accounts === "object") {
         const hdConfigResult = HardhatNetworkHDAccountsConfig.decode(
-          hardhatNetwork.accounts
+          hardhatNetwork.accounts,
         );
         if (hdConfigResult.isLeft()) {
           errors.push(
             getErrorMessage(
               `HardhatConfig.networks.${HARDHAT_NETWORK_NAME}.accounts`,
               hardhatNetwork.accounts,
-              "[{privateKey: string, balance: string}] | HardhatNetworkHDAccountsConfig | undefined"
-            )
+              "[{privateKey: string, balance: string}] | HardhatNetworkHDAccountsConfig | undefined",
+            ),
           );
         }
       } else if (hardhatNetwork.accounts !== undefined) {
@@ -273,14 +273,14 @@ export function getValidationErrors(config: any): string[] {
           getErrorMessage(
             `HardhatConfig.networks.${HARDHAT_NETWORK_NAME}.accounts`,
             hardhatNetwork.accounts,
-            "[{privateKey: string, balance: string}] | HardhatNetworkHDAccountsConfig | undefined"
-          )
+            "[{privateKey: string, balance: string}] | HardhatNetworkHDAccountsConfig | undefined",
+          ),
         );
       }
     }
 
     for (const [networkName, netConfig] of Object.entries<any>(
-      config.networks
+      config.networks,
     )) {
       if (networkName === HARDHAT_NETWORK_NAME) {
         continue;
@@ -292,8 +292,8 @@ export function getValidationErrors(config: any): string[] {
             getErrorMessage(
               `HardhatConfig.networks.${networkName}.url`,
               netConfig.url,
-              "string"
-            )
+              "string",
+            ),
           );
         }
       }
@@ -304,8 +304,8 @@ export function getValidationErrors(config: any): string[] {
           getErrorMessage(
             `HardhatConfig.networks.${networkName}`,
             netConfig,
-            "HttpNetworkConfig"
-          )
+            "HttpNetworkConfig",
+          ),
         );
       }
     }

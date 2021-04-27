@@ -6,14 +6,14 @@ import { OptimismZap__factory } from "../../typechain"
 import { OptimismZap } from "../../typechain"
 
 import * as HashUtils from "../../package-main/HashUtils"
-import { ZapMintIntent, MINT_INTENT_STATEMENT } from '../../package-main/HashUtils';
+import { ZapMintIntent, MINT_INTENT_STATEMENT } from "../../package-main/HashUtils";
 import {
   hexlify,
   hexZeroPad,
 } from "ethers/lib/utils"
 import { getZapMintIntentTypedDataToSign } from "../../package-main/OptimismZapContractActions"
-import { ZapMintIntentTypedData } from '../../package-main/ZapData';
-import { success } from '../../.yalc/hardhat/src/internal/core/config/config-validation';
+import { ZapMintIntentTypedData } from "../../package-main/ZapData";
+import { success } from "../../.yalc/hardhat/src/internal/core/config/config-validation";
 
 const name: string = "Zap"
 const symbol: string = "ZAP"
@@ -64,7 +64,6 @@ const shouldBehaveLikeSuccessfulZapMint = (
       )
     })
 
-
     context("when minting the first Zap for a UniqueZap hash", () => {
       it("should Publish the ZapSeries, and mint the Zap to the zapper", async () => {
         expect(await ZapContract.balanceOf(zapper)).to.equal(0)
@@ -81,7 +80,7 @@ const shouldBehaveLikeSuccessfulZapMint = (
       })
     })
     context("after minting a Zap in a series", () => {
-      beforeEach(async () => await mintFunction(EXAMPLE_IPFS_HASH, EXAMPLE_SERIES_TOTAL, hexZeroPad(hexlify(0), 4), true))
+      beforeEach(async () => mintFunction(EXAMPLE_IPFS_HASH, EXAMPLE_SERIES_TOTAL, hexZeroPad(hexlify(0), 4), true))
 
       it("should not Publish anything, and mint the Zap in the existing ZapSeries to the zapper", async () => {
         expect(await ZapContract.balanceOf(zapper)).to.equal(1)
@@ -123,7 +122,7 @@ const shouldBehaveLikeSuccessfulZapMint = (
 const shouldBehaveLikeZapMintWithoutApproval = (
   getZapContract: () => OptimismZap,
   mintFunction: (ipfsHash: BytesLike, seriesTotal: BytesLike, serialNumber: BytesLike, useGasLimitOverride: boolean) => PromiseLike<ContractTransaction>,
-  getZapper: () => BytesLike
+  getZapper: () => BytesLike,
 ) => {
   let ZapContract
   let zapId
@@ -164,7 +163,7 @@ describe("OptimismZap", () => {
   })
 
   // TODO: Should have a test for every possible input param that could be mismatched with signature - can share these specs with other ZapMintIntent signature verifiers with a 'behave' block.
-  context('write functions', () => {
+  context("write functions", () => {
     beforeEach(async () => {
       ZapContract = await new OptimismZap__factory(contractOwner).deploy(version)
     })
@@ -176,7 +175,7 @@ describe("OptimismZap", () => {
           ipfsHash,
           seriesTotal,
           serialNumber,
-          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {}
+          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {},
         )
       }
       shouldBehaveLikeSuccessfulZapMint(
@@ -187,7 +186,7 @@ describe("OptimismZap", () => {
       shouldBehaveLikeZapMintWithoutApproval(
         () => ZapContract,
         successfulMintByOwnerForOwner,
-        getContractOwnerAddress
+        getContractOwnerAddress,
       )
 
       it("reverts when called by an address other than the contract owner", async () => {
@@ -224,7 +223,7 @@ describe("OptimismZap", () => {
           serialNumber,
           getZapperAddress(),
           zapperSignature,
-          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {}
+          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {},
         );
       }
       shouldBehaveLikeSuccessfulZapMint(
@@ -236,7 +235,7 @@ describe("OptimismZap", () => {
       shouldBehaveLikeZapMintWithoutApproval(
         () => ZapContract,
         successfulMintByOwner,
-        getZapperAddress
+        getZapperAddress,
       )
 
       it("reverts when called by an address other than the contract owner", async () => {
@@ -247,7 +246,7 @@ describe("OptimismZap", () => {
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
           getZapperAddress(),
-          zapperSignature
+          zapperSignature,
         )).to.be.reverted
         // TODO: Need Optimism support of revert messages
         // )).to.revertedWith("Ownable: caller is not the owner");
@@ -260,7 +259,7 @@ describe("OptimismZap", () => {
           EXAMPLE_IPFS_HASH,
           claimedZapperAddress,
           EXAMPLE_SERIES_TOTAL,
-          EXAMPLE_SERIAL_NUMBER
+          EXAMPLE_SERIAL_NUMBER,
         )
         const fraudulentZapperSignature = await rando1._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
         await expect(ZapContract.connect(contractOwner).mintByOwner(
@@ -268,7 +267,7 @@ describe("OptimismZap", () => {
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
           claimedZapperAddress,
-          fraudulentZapperSignature
+          fraudulentZapperSignature,
         )).to.be.reverted
         // TODO: Need Optimism support of revert messages
         // )).to.revertedWith("OptimismZap: Signature address must match claimedZapper.");
@@ -280,19 +279,19 @@ describe("OptimismZap", () => {
           EXAMPLE_IPFS_HASH,
           rando1.address,
           EXAMPLE_SERIES_TOTAL,
-          EXAMPLE_SERIAL_NUMBER
+          EXAMPLE_SERIAL_NUMBER,
         )
         const mismatchedDataContractOwnerSignature = await contractOwner._signTypedData(
           typedDataWithDifferentZapper.typedDataDomain,
           typedDataWithDifferentZapper.types,
-          typedDataWithDifferentZapper.zapMintIntent
+          typedDataWithDifferentZapper.zapMintIntent,
         )
         await expect(ZapContract.connect(contractOwner).mintByOwner(
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
           rando1.address,
-          mismatchedDataContractOwnerSignature
+          mismatchedDataContractOwnerSignature,
         )).to.be.reverted
         // TODO: Need Optimism support of revert messages
         // )).to.revertedWith("OptimismZap: Signature address must match claimedZapper.");
@@ -320,7 +319,7 @@ describe("OptimismZap", () => {
           seriesTotal,
           serialNumber,
           contractOwnerSignature,
-          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {}
+          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {},
         );
       }
       shouldBehaveLikeSuccessfulZapMint(
@@ -332,7 +331,7 @@ describe("OptimismZap", () => {
       shouldBehaveLikeZapMintWithoutApproval(
         () => ZapContract,
         successfulMintByZapper,
-        getZapperAddress
+        getZapperAddress,
       )
 
       it("reverts when the contractOwnerSignatureData does not match the contract owner", async () => {
@@ -354,7 +353,7 @@ describe("OptimismZap", () => {
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
-          fraudulentContractOwnerSignature
+          fraudulentContractOwnerSignature,
         )).to.be.reverted
         // TODO: Use this when revert messages supported by optimism.
         // )).to.revertedWith("Zap: Signature address must match contract owner.");
@@ -379,7 +378,7 @@ describe("OptimismZap", () => {
           EXAMPLE_IPFS_HASH,
           EXAMPLE_SERIES_TOTAL,
           EXAMPLE_SERIAL_NUMBER,
-          contractOwnerSignatureOfOtherData
+          contractOwnerSignatureOfOtherData,
         )).to.be.reverted
         // TODO: Use this when revert messages supported by optimism.
         // )).to.revertedWith("Zap: Signature address must match contract owner.");
@@ -389,7 +388,7 @@ describe("OptimismZap", () => {
     describe("mintBySignatures", () => {
       const getZapperAddress = () => zapper.address;
       const successfulMintBySignatures = async (ipfsHash, seriesTotal, serialNumber, useGasLimitOverride) => {
-        return await ZapContract.connect(rando1).mintBySignatures(
+        return ZapContract.connect(rando1).mintBySignatures(
           ipfsHash,
           seriesTotal,
           serialNumber,
@@ -420,7 +419,7 @@ describe("OptimismZap", () => {
               serialNumber,
             },
           ),
-          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {}
+          useGasLimitOverride ? MAX_GAS_LIMIT_OVERRIDE : {},
         );
       }
       shouldBehaveLikeSuccessfulZapMint(
@@ -432,7 +431,7 @@ describe("OptimismZap", () => {
       shouldBehaveLikeZapMintWithoutApproval(
         () => ZapContract,
         successfulMintBySignatures,
-        getZapperAddress
+        getZapperAddress,
       )
 
       it("raises an error when the contract owner signature was not created by the contract owner", async () => {
@@ -447,7 +446,7 @@ describe("OptimismZap", () => {
           EXAMPLE_SERIAL_NUMBER,
           getZapperAddress(),
           await zapper._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent),
-          await rando1._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent)
+          await rando1._signTypedData(typedData.typedDataDomain, typedData.types, typedData.zapMintIntent),
         )).to.be.reverted;
         // TODO: Need Optimism support of revert messages
         // .to.revertedWith("OptimismZap: Mint of a serialNumber greater than or equal to the seriesTotal.")
@@ -524,7 +523,7 @@ describe("OptimismZap", () => {
       })
     })
 
-    context('EIP712 Hash methods', () => {
+    context("EIP712 Hash methods", () => {
       // Not a huge fan of the following specs since arguably they're testing whether keccak256 is behaving as expected.
       // That being said, I see these as assertions of which properties should be inputs to our hash function.
       describe("eip712HashZapMintIntent", () => {
@@ -584,7 +583,6 @@ describe("OptimismZap", () => {
             await ZapContract.eip712HashZapMintIntent(differentZapperPublication, EXAMPLE_SERIAL_NUMBER),
           )
         })
-
 
         it("should vary when seriesTotal differs", async () => {
           const otherSeriesTotal = "0x0000000f"
@@ -709,7 +707,7 @@ describe("OptimismZap", () => {
           ).deploy(version)
           expect(eip712HashSeriesPublicationString).to.not.equal(
             await otherZapContract.eip712HashSeriesPublication(
-              EXAMPLE_PUBLICATION
+              EXAMPLE_PUBLICATION,
             ),
           )
         })
@@ -761,7 +759,6 @@ describe("OptimismZap", () => {
             EXAMPLE_ZAPPER,
           ))
         })
-
 
         it("should produce the _hashTypedDataV4 hash of the keccak256 hash of an inputted SeriesFingerprint struct", async () => {
           expect(eip712HashSeriesFingerprintString).to.equal(

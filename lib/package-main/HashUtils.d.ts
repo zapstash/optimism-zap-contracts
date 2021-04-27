@@ -29,14 +29,6 @@ export declare const SeriesFingerprint: {
     name: string;
     type: string;
 }[];
-/**
- * Returns domain separator as per EIP 712 spec.
- * @param name The human-readable name of the dapp
- * @param version The human-readable version of the dapp
- * @param chainId The chain id of the deployed contract
- * @param verifyingContract The contract of the dapp
- */
-export declare function domainSeparator(name: string, version: string, chainId: number, verifyingContract: BytesLike): string;
 export declare function eip712HashZapMintIntent(name: string, version: string, chainId: number, contractAddress: string, ipfsHash: BytesLike, zapper: BytesLike, seriesTotal: BytesLike, serialNumber: BytesLike): BytesLike;
 export declare function eip712HashZapData(name: string, version: string, chainId: number, contractAddress: string, ipfsHash: BytesLike, zapper: BytesLike, seriesTotal: BytesLike, serialNumber: BytesLike): BytesLike;
 export declare function eip712HashSeriesPublication(name: string, version: string, chainId: number, contractAddress: string, ipfsHash: BytesLike, zapper: BytesLike, seriesTotal: BytesLike): BytesLike;

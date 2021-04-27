@@ -1,6 +1,7 @@
 declare const _default: {
-    rinkeby: {
-        ZapContract: string;
+    optimism: {};
+    kovanOptimism: {
+        OptimismZapContract: string;
     };
 };
 export default _default;

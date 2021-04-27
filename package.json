@@ -13,7 +13,9 @@
     "test": "yarn clean && hardhat test --network localOptimism",
     "lint": "yarn run lint:typescript",
     "lint:typescript": "tslint --format stylish --project .",
-    "build:package": "tsc --build tsconfig.package.json"
+    "build:package": "tsc --build tsconfig.package.json",
+    "deploy": "hardhat run --network kovanOptimism scripts/deploy.js",
+    "deploy:test": "hardhat run --network kovanOptimism scripts/testDeploy.js"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",

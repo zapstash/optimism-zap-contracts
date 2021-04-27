@@ -19,5 +19,5 @@ TODO: Make these npm commands (nice to have)
 ## Local network
 `npx hardhat run --network localhost scripts/deploy.js`
 
-## Rinkeby (WIP)
-`npx hardhat run --network rinekby scripts/deploy.js`
+## Kovan Optimism
+`npx hardhat run --network kovanOptimism scripts/deploy.js`
